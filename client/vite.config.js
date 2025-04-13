@@ -13,7 +13,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://data-rqkl.onrender.com',
+        target: 'https://data-rqkl.onrender.com/api',
         changeOrigin: true,
       },
     },
