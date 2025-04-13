@@ -38,7 +38,7 @@ function SubjectDetails() {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await axios.get(`/api/branches/${branchId}/semesters/${semesterId}/subjects/${subjectId}`);
+        const response = await axios.get(`/api/branches/${branchId}/semesters/${semesterId}/subjects/${subjectId}`); // Use proxy path
         // Initialize questions array if it's missing
         setSubject({ ...response.data, questions: response.data.questions || [] });
       } catch (err) {
@@ -81,7 +81,7 @@ function SubjectDetails() {
       // Send the newQuestion state (which doesn't have questionId)
       // API returns the created question object including the generated ID
       const response = await axios.post(
-        `/api/branches/${branchId}/semesters/${semesterId}/subjects/${subjectId}/questions`,
+        `/api/branches/${branchId}/semesters/${semesterId}/subjects/${subjectId}/questions`, // Use proxy path
         {...newQuestion, marks: Number(newQuestion.marks) || 1} // Ensure marks is a number
       );
       const createdQuestion = response.data; // Contains backend-generated questionId
@@ -120,7 +120,7 @@ function SubjectDetails() {
     const loadingToastId = toast.loading('Deleting question...');
     try {
       // Use the questionId in the URL
-      await axios.delete(`/api/branches/${branchId}/semesters/${semesterId}/subjects/${subjectId}/questions/${questionId}`);
+      await axios.delete(`/api/branches/${branchId}/semesters/${semesterId}/subjects/${subjectId}/questions/${questionId}`); // Use proxy path
       toast.success('Question deleted successfully!', { id: loadingToastId });
 
       // --- UPDATE STATE DIRECTLY ---

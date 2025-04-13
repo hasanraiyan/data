@@ -28,7 +28,7 @@ function SemesterDetails() {
   const fetchSemester = async () => {
     // No need to setIsLoading(true) here if called only from useEffect
     try {
-      const response = await axios.get(`/api/branches/${branchId}/semesters/${semesterId}`);
+      const response = await axios.get(`/api/branches/${branchId}/semesters/${semesterId}`); // Use proxy path
        // Initialize subjects array if it's missing in the response
       setSemester({ ...response.data, subjects: response.data.subjects || [] });
     } catch (error) {
@@ -64,7 +64,7 @@ function SemesterDetails() {
     const loadingToastId = toast.loading('Creating subject...');
     try {
       // Assuming the API returns the full new subject object including the generated ID
-      const response = await axios.post(`/api/branches/${branchId}/semesters/${semesterId}/subjects`, newSubject);
+      const response = await axios.post(`/api/branches/${branchId}/semesters/${semesterId}/subjects`, newSubject); // Use proxy path
       const createdSubject = response.data;
 
       toast.success('Subject created successfully!', { id: loadingToastId });
@@ -93,7 +93,7 @@ function SemesterDetails() {
     setIsDeleting(subjectId);
     const loadingToastId = toast.loading(`Deleting subject "${subjectName}"...`);
     try {
-      await axios.delete(`/api/branches/${branchId}/semesters/${semesterId}/subjects/${subjectId}`);
+      await axios.delete(`/api/branches/${branchId}/semesters/${semesterId}/subjects/${subjectId}`); // Use proxy path
       toast.success(`Subject "${subjectName}" deleted successfully!`, { id: loadingToastId });
 
       // --- UPDATE STATE DIRECTLY ---

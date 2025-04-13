@@ -22,13 +22,13 @@ function BranchDetails() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(null); // Track which semester ID is being deleted
 
-  const API_BASE_URL = '/api'; // Define base URL for API calls
+  // const API_BASE_URL = 'https://data-rqkl.onrender.com'; // Define base URL for API calls - No longer needed
 
   const fetchBranch = async () => {
     setIsLoading(true);
     setBranch(null); // Reset branch state before fetching
     try {
-      const response = await axios.get(`${API_BASE_URL}/branches/${branchId}`);
+      const response = await axios.get(`/api/branches/${branchId}`); // Use proxy path
       setBranch(response.data);
     } catch (error) {
       console.error('Error fetching branch:', error);
@@ -69,7 +69,7 @@ function BranchDetails() {
     const loadingToastId = toast.loading('Creating semester...');
     try {
       // --- API Call Change: Only send 'number' ---
-      await axios.post(`${API_BASE_URL}/branches/${branchId}/semesters`, {
+      await axios.post(`/api/branches/${branchId}/semesters`, { // Use proxy path
         number: parseInt(newSemester.number, 10) // Ensure number is sent as an integer
       });
       await fetchBranch(); // Refetch data to update the list
@@ -91,7 +91,7 @@ function BranchDetails() {
       setIsDeleting(semesterId); // Set the deleting state to the specific semester ID
       const loadingToastId = toast.loading('Deleting semester...');
       try {
-        await axios.delete(`${API_BASE_URL}/branches/${branchId}/semesters/${semesterId}`);
+        await axios.delete(`/api/branches/${branchId}/semesters/${semesterId}`); // Use proxy path
         // Optimistic UI update (optional but good UX):
         // setBranch(prev => ({
         //   ...prev,

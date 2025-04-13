@@ -13,8 +13,9 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://data-rqkl.onrender.com/api',
+        target: 'https://data-rqkl.onrender.com/api', // Target the base URL
         changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''), // Remove /api prefix
       },
     },
   },

@@ -18,6 +18,7 @@ import {
  * @param {Array} branches - Array of branch objects { id, name, description } (Passed from parent, fetched initially)
  */
 function Branches({ branches = [] }) { // Removed setBranches prop
+    console.log(branches)
   const [newBranch, setNewBranch] = useState({ name: '', description: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(null);
@@ -37,7 +38,7 @@ function Branches({ branches = [] }) { // Removed setBranches prop
     setIsSubmitting(true);
     // Use toast.promise for better loading/success/error handling with reload
     await toast.promise(
-        axios.post('/api/branches', newBranch),
+        axios.post('/api/branches', newBranch), // Use proxy path
         {
             loading: 'Creating branch...',
             success: (response) => {
@@ -66,7 +67,7 @@ function Branches({ branches = [] }) { // Removed setBranches prop
 
     // Use toast.promise for better handling
     await toast.promise(
-        axios.delete(`/api/branches/${branchId}`),
+        axios.delete(`/api/branches/${branchId}`), // Use proxy path
         {
             loading: `Deleting branch "${branchName}"...`,
             success: () => {
