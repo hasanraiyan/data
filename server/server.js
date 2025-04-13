@@ -5,9 +5,12 @@ import semestersRouter from './routes/semesters.js';
 import subjectsRouter from './routes/subjects.js';
 import questionsRouter from './routes/questions.js';
 import { readData, writeData } from './dataManager.js';
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 
