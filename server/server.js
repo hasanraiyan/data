@@ -9,6 +9,19 @@ import { readData, writeData } from './dataManager.js';
 const app = express();
 const PORT = 3000;
 app.use(express.json());
+const whitelist = ['https://data-iota-orpin.vercel.app/']; // replace with your real domain
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || whitelist.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 app.use((req, res, next) => {
   console.log(`Received ${req.method} request for ${req.url}`);
