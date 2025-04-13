@@ -1,0 +1,28 @@
+{
+  "branches": [
+    {
+      "id": "4e742189-d256-4697-8612-8dc3eaf0d224",
+      "name": "aksd",
+      "description": "",
+      "semesters": [
+        {
+          "id": "b475e5a6-bf4e-4577-a0ff-24de35fda351",
+          "number": 2,
+          "subjects": [
+            {
+              "id": "3c9a1d6f-9e74-44a9-9eae-b3bc65ce6149",
+              "name": "Indormam ",
+              "code": "88398",
+              "questions": []
+            }
+          ]
+        },
+        {
+          "id": "196c6e5f-52e6-4f1a-a6a3-fc6885436dd6",
+          "number": 3,
+          "subjects": []
+        }
+      ]
+    }
+  ]
+}
