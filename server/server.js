@@ -13,13 +13,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
-const corsOptions = {
-  origin: 'https://data-rqkl.onrender.com',
-  optionsSuccessStatus: 200 // For legacy browser support
-};
-
-app.use(cors(corsOptions));
-
 app.use((req, res, next) => {
   console.log(`Received ${req.method} request for ${req.url}`);
   next();
