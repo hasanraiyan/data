@@ -9,7 +9,7 @@ import { readData, writeData } from './dataManager.js';
 const app = express();
 const PORT = 3000;
 app.use(express.json());
-const whitelist = ['https://data-iota-orpin.vercel.app/']; // replace with your real domain
+const whitelist = ['https://data-iota-orpin.vercel.app']; // replace with your real domain
 const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || whitelist.includes(origin)) {
