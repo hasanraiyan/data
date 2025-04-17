@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Bank Dashboard</title>
+    <!-- Include Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Simple scrollbar styling */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px;}
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px;}
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+        /* Style for accordion content */
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        details[open] .accordion-content { max-height: 1000px; /* Adjust as needed */ } /* Ensure content is visible */
+        details > summary { list-style: none; } /* Hide default marker */
+        details > summary::-webkit-details-marker { display: none; } /* Hide default marker */
+        /* Add custom arrow */
+         details > summary::before {
+            content: '►'; /* Right arrow */
+            margin-right: 0.5rem;
+            display: inline-block;
+            transition: transform 0.2s ease-in-out;
+        }
+        details[open] > summary::before {
+             transform: rotate(90deg); /* Down arrow */
+        }
+         /* Style code blocks */
+        pre {
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            border-left: 3px solid #007bff;
+            color: #333;
+            page-break-inside: avoid;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 1.6em;
+            max-width: 100%;
+            overflow: auto;
+            padding: 1em 1.5em;
+            display: block;
+            word-wrap: break-word;
+            border-radius: 4px;
+        }
+         /* Style inline code */
+        code:not(pre > code) {
+            background-color: #eee;
+            padding: 0.2em 0.4em;
+            margin: 0;
+            font-size: 85%;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        /* Images within questions */
+        .question-content img {
+             max-width: 300px; /* Limit image size */
+             height: auto;
+             margin-top: 0.5rem;
+             border: 1px solid #ddd;
+             border-radius: 4px;
+             display: block; /* Make image block level */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Question Bank Dashboard</h1>
+
+        <!-- Flash Messages -->
+        <% if (locals.message) { %>
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span class="block sm:inline"><%= message %></span>
+            </div>
+        <% } %>
+        <% if (locals.error) { %>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span class="block sm:inline"><%= error %></span>
+            </div>
+        <% } %>
+
+
+        <!-- Branches Loop -->
+        <% if (!data || !data.branches || data.branches.length === 0) { %>
+            <p class="text-gray-600">No branches found in <code>data.json</code>.</p>
+        <% } else { %>
+            <% data.branches.forEach(branch => { %>
+            <div class="bg-white rounded-lg shadow-md mb-6 overflow-hidden">
+                <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 flex items-center">
+                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    <h2 class="text-xl font-semibold"><%= branch.name %> <span class="text-sm font-normal opacity-80">(ID: <%= branch.id %>)</span></h2>
+                </div>
+
+                <div class="p-4 space-y-4">
+                    <!-- Semesters Loop -->
+                    <% branch.semesters.forEach(semester => { %>
+                    <details class="bg-gray-50 rounded border border-gray-200 group">
+                        <summary class="p-3 cursor-pointer font-medium text-gray-700 flex justify-between items-center hover:bg-gray-100">
+                            Semester <%= semester.number %> <span class="text-sm font-normal text-gray-500">(ID: <%= semester.id %>)</span>
+                             <span class="text-xs text-gray-500 transform transition-transform duration-200 group-open:rotate-90">▶</span> <!-- Custom Arrow -->
+                        </summary>
+                        <div class="accordion-content p-4 border-t border-gray-200">
+                            <!-- Subjects Loop -->
+                            <% semester.subjects.forEach(subject => { %>
+                            <details class="bg-white rounded border border-gray-200 mb-3 group/subject">
+                                <summary class="p-3 cursor-pointer font-medium text-sm text-gray-600 flex justify-between items-center hover:bg-gray-50">
+                                    <%= subject.name %> <span class="text-xs font-normal text-gray-500">(<%= subject.code %> / <%= subject.id %>)</span>
+                                     <span class="text-xs text-gray-500 transform transition-transform duration-200 group-open/subject:rotate-90">▶</span>
+                                </summary>
+                                <div class="accordion-content p-4 border-t border-gray-200 space-y-3">
+
+                                    <!-- Existing Questions -->
+                                    <h5 class="text-xs font-semibold text-gray-500 uppercase mb-2">Questions</h5>
+                                    <% if (subject.questions && subject.questions.length > 0) { %>
+                                        <% subject.questions.forEach(q => { %>
+                                        <div class="border border-gray-200 rounded p-3 relative bg-white hover:shadow-sm transition-shadow duration-150">
+                                             <form action="/delete_question/<%= branch.id %>/<%= semester.id %>/<%= subject.id %>/<%= q.questionId %>" method="POST" class="absolute top-2 right-2">
+                                                <button type="submit" onclick="return confirm('Are you sure you want to delete question <%= q.questionId %>?');" class="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-100 transition-colors text-xs">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                </button>
+                                            </form>
+
+                                            <p class="text-xs text-gray-500 mb-1">
+                                                <span class="font-semibold">ID:</span> <%= q.questionId %> |
+                                                <span class="font-semibold">Year:</span> <%= q.year %> |
+                                                <span class="font-semibold">Q#:</span> <%= q.qNumber %> |
+                                                <span class="font-semibold">Marks:</span> <%= q.marks %> |
+                                                <span class="font-semibold">Type:</span> <%= q.type %>
+                                            </p>
+                                            <% if (q.chapter) { %>
+                                                <p class="text-xs text-gray-500 mb-2"><span class="font-semibold">Module/Chapter:</span> <%= q.chapter %></p>
+                                            <% } %>
+                                            <div class="text-sm text-gray-800 mt-1 question-content">
+                                                <!-- Use <%- to prevent HTML escaping if needed, but be cautious -->
+                                                <!-- Basic markdown image handling -->
+                                                <%
+                                                  let questionText = q.text;
+                                                  const imgRegex = /!\[image\]\((.*?)\)/g;
+                                                  questionText = questionText.replace(imgRegex, (match, url) => {
+                                                    return `<img src="${url}" alt="Question Image">`;
+                                                  });
+                                                 %>
+                                                <%- questionText.replace(/\n/g, '<br>') %> <% /* Render newlines as <br>, allow basic HTML */ %>
+                                            </div>
+
+                                            <% if (q.type.toUpperCase() === 'MCQ' && q.options && q.options.length > 0) { %>
+                                            <div class="mt-2">
+                                                <p class="text-xs font-semibold text-gray-600">Options:</p>
+                                                <ul class="list-disc list-inside text-sm text-gray-700 pl-4">
+                                                    <% q.options.forEach(opt => { %>
+                                                        <li><%= opt %></li>
+                                                    <% }); %>
+                                                </ul>
+                                            </div>
+                                            <% } %>
+                                        </div>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <p class="text-sm text-gray-500 italic">No questions added yet.</p>
+                                    <% } %>
+
+                                    <!-- Add Question Form -->
+                                    <div class="mt-4 pt-4 border-t border-dashed border-gray-300">
+                                        <h5 class="text-xs font-semibold text-gray-500 uppercase mb-3">Add New Question</h5>
+                                        <form action="/add_question/<%= branch.id %>/<%= semester.id %>/<%= subject.id %>" method="POST" class="space-y-3 text-sm">
+                                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                                <div>
+                                                    <label for="year-<%= subject.id %>" class="block text-xs font-medium text-gray-700 mb-1">Year*</label>
+                                                    <input type="number" id="year-<%= subject.id %>" name="year" required class="w-full px-3 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm">
+                                                </div>
+                                                <div>
+                                                    <label for="qNumber-<%= subject.id %>" class="block text-xs font-medium text-gray-700 mb-1">Q Number (e.g., Q1a)*</label>
+                                                    <input type="text" id="qNumber-<%= subject.id %>" name="qNumber" required class="w-full px-3 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm">
+                                                </div>
+                                                 <div>
+                                                    <label for="marks-<%= subject.id %>" class="block text-xs font-medium text-gray-700 mb-1">Marks*</label>
+                                                    <input type="number" id="marks-<%= subject.id %>" name="marks" required class="w-full px-3 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm">
+                                                </div>
+                                            </div>
+                                             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                 <div>
+                                                    <label for="type-<%= subject.id %>" class="block text-xs font-medium text-gray-700 mb-1">Type*</label>
+                                                    <select id="type-<%= subject.id %>" name="type" required class="w-full px-3 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm bg-white">
+                                                        <!-- Add more types based on your data -->
+                                                        <option value="Explanation">Explanation</option>
+                                                        <option value="MCQ">MCQ</option>
+                                                        <option value="Explanation with Example">Explanation with Example</option>
+                                                        <option value="Differentiate with Example">Differentiate with Example</option>
+                                                        <option value="Explanation with Diagram">Explanation with Diagram</option>
+                                                        <option value="Explanation with Code">Explanation with Code</option>
+                                                        <option value="List">List</option>
+                                                        <option value="Code">Code</option>
+                                                        <option value="Differentiate">Differentiate</option>
+                                                        <option value="Definition & Problem">Definition & Problem</option>
+                                                        <option value="Algorithm">Algorithm</option>
+                                                        <option value="Problem">Problem</option>
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <label for="chapter-<%= subject.id %>" class="block text-xs font-medium text-gray-700 mb-1">Module/Chapter</label>
+                                                    <input type="text" id="chapter-<%= subject.id %>" name="chapter" class="w-full px-3 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="e.g., Module 1: Fundamentals">
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label for="text-<%= subject.id %>" class="block text-xs font-medium text-gray-700 mb-1">Question Text*</label>
+                                                <textarea id="text-<%= subject.id %>" name="text" rows="4" required class="w-full px-3 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="Enter the full question text here..."></textarea>
+                                            </div>
+                                             <div>
+                                                <label for="options-<%= subject.id %>" class="block text-xs font-medium text-gray-700 mb-1">Options (for MCQ Type, one per line)</label>
+                                                <textarea id="options-<%= subject.id %>" name="options" rows="4" class="w-full px-3 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="Option 1
+Option 2
+Option 3"></textarea>
+                                                <p class="text-xs text-gray-500 mt-1">Only used if Type is 'MCQ'.</p>
+                                            </div>
+                                            <div>
+                                                <button type="submit" class="inline-flex justify-center py-1.5 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                                                    Add Question
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </details> <!-- End Subject Details -->
+                            <% }); %> <!-- End Subjects Loop -->
+                        </div>
+                    </details> <!-- End Semester Details -->
+                    <% }); %> <!-- End Semesters Loop -->
+                </div>
+            </div> <!-- End Branch Card -->
+            <% }); %> <!-- End Branches Loop -->
+        <% } %> <!-- End Else -->
+    </div>
+
+    <footer class="text-center text-sm text-gray-500 py-4 mt-8">
+        Question Bank Manager | Powered by Express & Tailwind CSS
+    </footer>
+
+    <script>
+        // Optional: Close other details when one opens (simple accordion behavior)
+        const detailsElements = document.querySelectorAll('details');
+
+        detailsElements.forEach(details => {
+            details.addEventListener('toggle', event => {
+                if (details.open) {
+                    // Optional: Close siblings or other detail elements as needed
+                    // Example: Close sibling details within the same parent
+                    // const parent = details.parentElement;
+                    // parent.querySelectorAll('details').forEach(siblingDetails => {
+                    //    if (siblingDetails !== details && siblingDetails.open) {
+                    //         siblingDetails.removeAttribute('open');
+                    //    }
+                    // });
+                 }
+            });
+        });
+    </script>
+
+</body>
+</html>
